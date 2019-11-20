@@ -1,0 +1,5 @@
+{
+ "source": ["root","adm123456","192.168.7.231","3306","cobase_basic"],
+ "dest": ["root","mysql","192.168.7.250","30001","cobase_basic"],
+ "sync": false
+}
