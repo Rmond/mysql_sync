@@ -4,7 +4,7 @@ import os,json
 import time
 import operator
 import pymysql
-from cloumn_check import *
+from column_check import *
 from key_check import *
 
 #初始化不同的数据库
@@ -109,7 +109,8 @@ if __name__ == '__main__':
     f.close()
     if config["sync"]:
         with open(out_put, 'r+',encoding="utf-8") as f:
-            sql_exexute(tag_coursor, f)
+           sql_exexute(tag_coursor, f)
+        print("Success Synced")
     close_db(src_coursor)
     close_db(tag_coursor)
 
