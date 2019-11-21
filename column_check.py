@@ -1,5 +1,5 @@
 #传入表名，获取所有的列
-def col_get(cursor,db,tab):
+def col_get(cursor, db, tab):
     col_list = []
     sql = "select column_name from information_schema.columns where table_name= '%s'and table_schema='%s'" %(tab,db)
     try:
@@ -39,30 +39,18 @@ def col_type_get(cursor,db,tab,column_name):
 def col_sql(tab,column_name,column_type,mode,before_col=None):
     col_type=column_type[0]
     col_isnull=column_type[1]
-    col_defaul=column_type[2]
+    col_default=column_type[2]
     col_comment=column_type[3]
     if before_col:
         col_front = "' AFTER `" + before_col[0] + "`;"
     else:
         col_front = "' FIRST;"
-    if mode == 'c':
-       if (col_isnull == 'YES' and col_defaul==None):  # 如果允许为空且无任何默认值
-           sql = "alter table " + str(tab) + " modify column `" + str(column_name) + "` " + str(col_type) + " default null COMMENT '"+str(col_comment) + str(col_front)
-       elif(col_isnull == 'YES' and col_defaul!=None):#允许为空且有默认值
-           sql = "alter table " + str(tab) + " modify column `" + str(column_name) + "` " + str(col_type) + " default '"+ str(col_defaul) +"' COMMENT '" + str(col_comment) + str(col_front)
-       elif (col_isnull != 'YES' and col_defaul==None): #不允许为空且无默认值
-           sql = "alter table " + str(tab) + " modify column `" + str(column_name) + "` " + str(col_type) + " not null COMMENT '" + str(col_comment) + str(col_front)
-       else:  # 如果不允许为空，且设置了默认值 col_defaul != 'None':
-           sql = "alter table " + str(tab) + " modify column `" + str(column_name) + "` " + str(col_type) + " not null default '" + str(col_defaul) + "' COMMENT '" + str(col_comment) + str(col_front)
-    elif mode == 'a':
-        if (col_isnull =='YES' and col_defaul==None):#如果允许为空，且无默认值
-            sql = "alter table " + str(tab) + " add  column `" + str(column_name) + "` " + str(col_type)+" COMMENT '"+str(col_comment) + str(col_front)
-        elif (col_isnull=='YES' and col_defaul!=None): #如果允许为空,且有默认值
-            sql="alter table " + str(tab) + " add  column `" + str(column_name) + "` " + str(col_type)+" NULL default '"+str(col_defaul) +"' COMMENT '" + str(col_comment) + str(col_front)
-        elif (col_isnull !='YES' and col_defaul==None): #如果不允许为空，且没有默认值
-            sql = "alter table " + str(tab) + " add  column `" + str(column_name) + "` " + str(col_type)+" not null COMMENT '"+str(col_comment) + str(col_front)
-        else:  #如果不允许为空，且设置了默认值
-            sql = "alter table " + str(tab) + " add  column `" + str(column_name) + "` " + str(col_type)+" not null default  '"+str(col_defaul) +"' COMMENT '" + str(col_comment) + str(col_front)
-    elif mode == 'd':
-        sql = "alter table " + str(tab) + " drop column `" + str(column_name)+"`;"
+    if (col_isnull == 'YES' and col_default==None):  # 如果允许为空且无任何默认值
+        sql = "alter table " + str(tab) + " "+mode+" column `" + str(column_name) + "` " + str(col_type) + " default null COMMENT '"+str(col_comment) + str(col_front)
+    elif(col_isnull == 'YES' and col_default!=None):#允许为空且有默认值
+        sql = "alter table " + str(tab) + " "+mode+" column `" + str(column_name) + "` " + str(col_type) + " default '"+ str(col_default) +"' COMMENT '" + str(col_comment) + str(col_front)
+    elif (col_isnull != 'YES' and col_default==None): #不允许为空且无默认值
+        sql = "alter table " + str(tab) + " "+mode+" column `" + str(column_name) + "` " + str(col_type) + " not null COMMENT '" + str(col_comment) + str(col_front)
+    else:  # 如果不允许为空，且设置了默认值 col_default != 'None':
+        sql = "alter table " + str(tab) + " "+mode+" column `" + str(column_name) + "` " + str(col_type) + " not null default '" + str(col_default) + "' COMMENT '" + str(col_comment) + str(col_front)
     return sql

@@ -83,7 +83,7 @@ if __name__ == '__main__':
             for column in add_col:
                 col_type = col_type_get(src_coursor, db_source, tab, column)
                 before_col = before_col_get(src_coursor, db_source, tab, column)
-                sql = col_sql(tab, column, col_type, 'a', before_col)
+                sql = col_sql(tab, column, col_type, 'add', before_col)
                 f.write(sql+'\n')
         #source,target中都有，需要对比，并修改
             for column in same_col:
@@ -95,12 +95,11 @@ if __name__ == '__main__':
                 if operator.eq(src_col_type, tag_col_type):
                     continue
                 else:
-                    sql = col_sql(tab, column, src_col_type, 'c', before_col)
+                    sql = col_sql(tab, column, src_col_type, 'modify', before_col)
                     f.write(sql+'\n')
         # source中没有，target中有，需要删除
             for column in del_col:
-                col_type = col_type_get(tag_coursor, db_dest, tab, column)
-                sql = col_sql(tab, column, col_type, 'd')
+                sql = "alter table " + tab + " drop column `" + column+"`;"
                 f.write(sql+'\n')
             for key in key_dict["addlist"]:
                 key_property = getkey_property(src_coursor, db_source, tab, key["name"])
