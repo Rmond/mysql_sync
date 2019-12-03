@@ -41,7 +41,7 @@ if __name__ == '__main__':
             sys.exit(0)
     cur_path = os.path.abspath(os.curdir)
     cur_time= time.strftime('%Y%m%d_%H%M%S',time.localtime(time.time()))
-    out_put=(cur_path + '/logs/' + 'dbsync' + cur_time + '.sql')
+    out_put=(cur_path + '/logs/' + conf_file.split('.json')[0] + cur_time + '.sql')
     db_source = config["source"][-1]
     db_dest = config["dest"][-1]
     #print(db_source)
