@@ -27,15 +27,26 @@ def get_table(cursor):
     return table_list
 
 #获取建表sql
-def get_table_sql(cursor,tab):
+def get_table_sql(cursor,db,tab):
    sql = "show create table %s " %(tab)
    try:
         cursor.execute(sql) 	#执行sql语句
-        sql = cursor.fetchone()[1] + ";"
+        create_sql = cursor.fetchone()[1]
+        if 'ROW_FORMAT' in create_sql:
+            sql = create_sql + ";"
+        else:
+            sql2 = "SELECT ROW_FORMAT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='"+db+"' and TABLE_NAME='"+tab+"'"
+            cursor.execute(sql2)
+            sql = create_sql + " ROW_FORMAT="+cursor.fetchone()[0]+";"
    except Exception as e:
         raise e
    return sql
 
+def get_tb_format(cursor,db,tab):
+    sql = "SELECT ROW_FORMAT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='" + db + "' and TABLE_NAME='" + tab + "'"
+    cursor.execute(sql)
+    row_format = cursor.fetchone()[0]
+    return row_format
 #传入表名生成删除表的SQL
 #传入表名删除表
 # def drop_table_sql(cursor,tab):

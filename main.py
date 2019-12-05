@@ -17,16 +17,6 @@ def init(user,passwd,ip,port,db):
 def close_db(cursorsource):
   cursorsource.close()
 
-def sql_exexute(coursor,f):
-    sql_list = f.read().split(';')[:-1]  # sql文件最后一行加上;
-    sql_list = [x.replace('\n', ' ') if '\n' in x else x for x in sql_list]
-    for sql_item in sql_list:
-        sql = sql_item + ";"
-        try:
-            coursor.execute(sql)
-        except Exception as e:
-            raise e
-
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Error,The conf is needed!")
@@ -61,11 +51,12 @@ if __name__ == '__main__':
             sql = "drop table `" + tab + "`;"
             f.write(sql+'\n')
         for tab in add_table:
-            sql = get_table_sql(src_coursor, tab)
+            sql = get_table_sql(src_coursor,db_source,tab)
             #print(sql)
             f.write(sql+'\n')
     #需要比较表结构的表
         for tab in same_table:
+
             src_col = col_get(src_coursor, db_source, tab)
             dest_col = col_get(tag_coursor, db_dest, tab)
             add_col = compact_add(src_col,dest_col)
@@ -74,6 +65,12 @@ if __name__ == '__main__':
             src_keylist = get_key(src_coursor, db_source, tab)
             tag_keylist = get_key(tag_coursor, db_dest, tab)
             key_dict = compare_key(src_keylist, tag_keylist)
+            #
+            src_format = get_tb_format(src_coursor,db_source,tab)
+            dest_format = get_tb_format(tag_coursor,db_dest,tab)
+            if src_format != dest_format:
+                sql = 'ALTER TABLE '+ tab +' ROW_FORMAT = ' +src_format+ ';'
+                f.write(sql+'\n')
 
             #先删除索引，否则删除列导出重复删除报错
             for key in key_dict["dellist"]:
@@ -107,8 +104,9 @@ if __name__ == '__main__':
                 f.write(sql + '\n')
     f.close()
     if config["sync"]:
-        with open(out_put, 'r+',encoding="utf-8") as f:
-           sql_exexute(tag_coursor, f)
+        user,passwd,host,port,db = config["dest"]
+        shell='mysql -u'+user+' -h'+host+' -p'+passwd+' -P'+port+' '+db+'<'+out_put
+        os.popen(shell)
         print("Success Synced")
     close_db(src_coursor)
     close_db(tag_coursor)
