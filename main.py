@@ -17,18 +17,7 @@ def init(user,passwd,ip,port,db):
 def close_db(cursorsource):
   cursorsource.close()
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Error,The conf is needed!")
-        sys.exit(0)
-    else:
-        conf_file = sys.argv[1]
-        if os.path.isfile(conf_file):
-            with open(conf_file) as config_file:
-                config = json.load(config_file)
-        else:
-            print('Config file not exist!')
-            sys.exit(0)
+def mysql_sync(config):
     cur_path = os.path.abspath(os.curdir)
     cur_time= time.strftime('%Y%m%d_%H%M%S',time.localtime(time.time()))
     out_put=(cur_path + '/logs/' + conf_file.split('.json')[0] + cur_time + '.sql')
@@ -110,4 +99,19 @@ if __name__ == '__main__':
         print("Success Synced")
     close_db(src_coursor)
     close_db(tag_coursor)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Error,The conf is needed!")
+        sys.exit(0)
+    else:
+        conf_file = sys.argv[1]
+        if os.path.isfile(conf_file):
+            with open(conf_file) as config_file:
+                config = json.load(config_file)
+            mysql_sync(config_file)
+        else:
+            print('Config file not exist!')
+            sys.exit(0)
 
