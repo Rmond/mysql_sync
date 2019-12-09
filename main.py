@@ -110,7 +110,7 @@ if __name__ == '__main__':
         if os.path.isfile(conf_file):
             with open(conf_file) as config_file:
                 config = json.load(config_file)
-            mysql_sync(config_file)
+            mysql_sync(config,config_file)
         else:
             print('Config file not exist!')
             sys.exit(0)
