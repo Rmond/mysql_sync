@@ -17,7 +17,7 @@ def init(user,passwd,ip,port,db):
 def close_db(cursorsource):
   cursorsource.close()
 
-def mysql_sync(config):
+def mysql_sync(config,conf_file):
     cur_path = os.path.abspath(os.curdir)
     cur_time= time.strftime('%Y%m%d_%H%M%S',time.localtime(time.time()))
     out_put=(cur_path + '/logs/' + conf_file.split('.json')[0] + cur_time + '.sql')
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         if os.path.isfile(conf_file):
             with open(conf_file) as config_file:
                 config = json.load(config_file)
-            mysql_sync(config,config_file)
+            mysql_sync(config,conf_file)
         else:
             print('Config file not exist!')
             sys.exit(0)
