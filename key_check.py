@@ -65,11 +65,8 @@ def getkey_sql(tab,key_property,key_dict,mode):
     if mode == 'a':
         if(key_property == 0 and key_name.lower() == 'primary'): #主键
             sql = "alter table " + str(tab) + " add primary key (" + str(key_column) +");"
-        elif(key_property==0 and key_name.lower()!='primary'):#唯一索引
-            if(str(key_name) == "UNIQUE"):
-                sql = "alter table " + str(tab) + " add " + str(key_name) + "("+key_column+");"
-            else:
-                sql = "alter table " + str(tab) + " add unique " + str(key_name) + "("+key_column+");"
+        elif(key_property==0 and key_name.lower()!='primary'):#唯一索引                sql = "alter table " + str(tab) + " add " + str(key_name) + "("+key_column+");"
+            sql = "alter table " + str(tab) + " add unique index " + str(key_name) + "("+key_column+");"
         else:#普通索引
             sql = "alter table " + str(tab) + " add index " + str(key_name) + "(" + key_column+");"
     else:#删除索引
